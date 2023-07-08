@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -91,6 +92,7 @@ public class MazeController : MonoBehaviour
         // startpos and endpos
         Instantiate(startPosPrefab, transform).position = new Vector3(-width/2, 0, -height/2);
         Instantiate(destPosPrefab, transform).position = new Vector3(width/2-1, 0, height/2-1);
+
     }
     #endregion
 

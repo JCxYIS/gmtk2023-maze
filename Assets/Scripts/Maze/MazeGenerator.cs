@@ -74,6 +74,9 @@ public static class MazeGenerator
             }
         }
 
+        // maze[0, 0] &= ~WallState.LEFT;
+        // maze[width - 1, height - 1] &= ~WallState.RIGHT;
+
         return maze;
     }
 
