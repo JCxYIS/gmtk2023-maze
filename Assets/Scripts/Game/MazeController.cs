@@ -18,9 +18,14 @@ public class MazeController : MonoBehaviour
 
     [SerializeField]
     private Transform wallPrefab = null;
-
     [SerializeField]
-    private Transform floorPrefab = null;
+    private Transform startPosPrefab = null;
+    [SerializeField]
+    private Transform destPosPrefab = null;
+
+    
+    private WallState[,] _maze;
+
 
     #region monobehaviour
     
@@ -30,14 +35,16 @@ public class MazeController : MonoBehaviour
     /// </summary>
     void Start()
     {
-        var maze = MazeGenerator.Generate(width, height);
+        int seed = Random.Range(int.MinValue, int.MaxValue);
+        print("Seed: "+seed);
+        _maze = MazeGenerator.Generate(width, height, seed);
 
         // render maze
         for (int i = 0; i < width; ++i)
         {
             for (int j = 0; j < height; ++j)
             {
-                var cell = maze[i, j];
+                var cell = _maze[i, j];
                 var position = new Vector3(-width/2+i, 0, -height/2+j);
 
                 if (cell.HasFlag(WallState.UP))
@@ -81,7 +88,19 @@ public class MazeController : MonoBehaviour
                 }
             }
         }
+        // startpos and endpos
+        Instantiate(startPosPrefab, transform).position = new Vector3(-width/2, 0, -height/2);
+        Instantiate(destPosPrefab, transform).position = new Vector3(width/2-1, 0, height/2-1);
     }
-
     #endregion
+
+    public WallState GetCell(int i, int j)
+    {
+        if (i < 0 || i >= width || j < 0 || j >= height)
+        {
+            throw new System.IndexOutOfRangeException();
+        }
+
+        return _maze[i, j];
+    }
 }

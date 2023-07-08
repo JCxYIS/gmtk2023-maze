@@ -43,10 +43,10 @@ public static class MazeGenerator
         }
     }
 
-    private static WallState[,] ApplyRecursiveBacktracker(WallState[,] maze, int width, int height)
+    private static WallState[,] ApplyRecursiveBacktracker(WallState[,] maze, int width, int height, int rngSeed)
     {
         // here we make changes
-        var rng = new System.Random(/*seed*/);
+        var rng = new System.Random(rngSeed);
         var positionStack = new Stack<Position>();
         var position = new Position { X = rng.Next(0, width), Y = rng.Next(0, height) };
 
@@ -148,7 +148,7 @@ public static class MazeGenerator
         return list;
     }
 
-    public static WallState[,] Generate(int width, int height)
+    public static WallState[,] Generate(int width, int height, int seed = -1)
     {
         WallState[,] maze = new WallState[width, height];
         WallState initial = WallState.RIGHT | WallState.LEFT | WallState.UP | WallState.DOWN;
@@ -160,6 +160,6 @@ public static class MazeGenerator
             }
         }
         
-        return ApplyRecursiveBacktracker(maze, width, height);
+        return ApplyRecursiveBacktracker(maze, width, height, seed);
     }
 }
