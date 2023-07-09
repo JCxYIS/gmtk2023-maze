@@ -6,17 +6,18 @@ public class MazeValidator
 {
     public static List<Vector2Int> Path { get; private set; }
 
+    /// <summary>
+    /// Calculate the path from current position to destination postion, 
+    /// the path result will be sotred in public static class variable `MazeValidator.Path`
+    /// </summary>
+    /// <param name="currentPos">current position</param>
+    /// <param name="destPos">destination position</param>
+    /// <param name="maze">maze</param>
+    /// <returns>ture if path is found. other wise, return false</returns>
     public static bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
     {
-        // TODO route
-
-        // if(maze[0,1].HasFlag(WallState.UP))
-        // {
-        //     ...
-        // }
-
         // ------------------------------
-        // DFS
+        // BFS
         // ------------------------------
         int rows = maze.GetLength(0);
         int cols = maze.GetLength(0);
@@ -44,17 +45,48 @@ public class MazeValidator
                 break;
             }
 
+            // next step
             int newSteps = steps[pos.x, pos.y] + 1;
-            for (int i = 0; i < 4; i++) {
-                WallState state = directStatArr[i];
-                Vector2Int direction = directVecArr[i];
-                Vector2Int newPos = pos + direction;
-                int targetSteps = steps[newPos.x, newPos.y];
+            Vector2Int newPos;
 
-                // no wall AND newPos not visited
-                if (!maze[pos.x, pos.y].HasFlag(state) 
-                        && (newSteps < targetSteps || targetSteps == -1)) {
+            // check up
+            if (!maze[pos.x, pos.y].HasFlag(WallStat.UP)) {
+                if (newSteps < targetSteps || targetSteps == -1) {
+                    newPos = pos + new Vector2Int(0, 1);
+                    steps[newPos.x, newPos.y] = newSteps;
+                    traceBackMap[newPos.x, newPos.y] = pos;
+                    queue.Enqueue(newPos);
+                }
+            }
 
+            // check down
+            if (!maze[pos.x, pos.y].HasFlag(WallStat.LEFT)) {
+                if (newSteps < targetSteps || targetSteps == -1) {
+                    newPos = pos + new Vector2Int(-1, 0);
+                    steps[newPos.x, newPos.y] = newSteps;
+                    traceBackMap[newPos.x, newPos.y] = pos;
+                    queue.Enqueue(newPos);
+                }
+            }
+
+            //! ---- Special case: DOWN and RIGHT ----
+            //* Due to same ... reason, the down case and right case need some sepcial condition
+            // check DOWN
+                //* down condition: check if down block has upper wall
+            if (!maze[pos.x, pos.y - 1].HasFlag(WallStat.UP)) {
+                if (newSteps < targetSteps || targetSteps == -1) {
+                    newPos = pos + new Vector2Int(0, -1);
+                    steps[newPos.x, newPos.y] = newSteps;
+                    traceBackMap[newPos.x, newPos.y] = pos;
+                    queue.Enqueue(newPos);
+                }
+            }
+
+            // check RIGHT
+                //* right condition: check if right block has left wall
+            if (!maze[pos.x +1, pos.y].HasFlag(WallStat.LEFT)) {
+                if (newSteps < targetSteps || targetSteps == -1) {
+                    newPos = pos + new Vector2Int(1, 0);
                     steps[newPos.x, newPos.y] = newSteps;
                     traceBackMap[newPos.x, newPos.y] = pos;
                     queue.Enqueue(newPos);
@@ -78,6 +110,7 @@ public class MazeValidator
         Path.Add(currentPos);
         // Path.Reverse();
 
+        // path found, return true
         return true;
     }
 }
