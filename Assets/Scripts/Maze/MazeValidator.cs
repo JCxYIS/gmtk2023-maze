@@ -51,8 +51,9 @@ public class MazeValidator
 
             // check up
             if (!maze[pos.x, pos.y].HasFlag(WallStat.UP)) {
+                newPos = pos + new Vector2Int(0, 1);
+                int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
-                    newPos = pos + new Vector2Int(0, 1);
                     steps[newPos.x, newPos.y] = newSteps;
                     traceBackMap[newPos.x, newPos.y] = pos;
                     queue.Enqueue(newPos);
@@ -61,8 +62,9 @@ public class MazeValidator
 
             // check down
             if (!maze[pos.x, pos.y].HasFlag(WallStat.LEFT)) {
+                newPos = pos + new Vector2Int(-1, 0);
+                int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
-                    newPos = pos + new Vector2Int(-1, 0);
                     steps[newPos.x, newPos.y] = newSteps;
                     traceBackMap[newPos.x, newPos.y] = pos;
                     queue.Enqueue(newPos);
@@ -74,8 +76,9 @@ public class MazeValidator
             // check DOWN
                 //* down condition: check if down block has upper wall
             if (!maze[pos.x, pos.y - 1].HasFlag(WallStat.UP)) {
+                newPos = pos + new Vector2Int(0, -1);
+                int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
-                    newPos = pos + new Vector2Int(0, -1);
                     steps[newPos.x, newPos.y] = newSteps;
                     traceBackMap[newPos.x, newPos.y] = pos;
                     queue.Enqueue(newPos);
@@ -85,8 +88,9 @@ public class MazeValidator
             // check RIGHT
                 //* right condition: check if right block has left wall
             if (!maze[pos.x +1, pos.y].HasFlag(WallStat.LEFT)) {
+                newPos = pos + new Vector2Int(1, 0);
+                int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
-                    newPos = pos + new Vector2Int(1, 0);
                     steps[newPos.x, newPos.y] = newSteps;
                     traceBackMap[newPos.x, newPos.y] = pos;
                     queue.Enqueue(newPos);
