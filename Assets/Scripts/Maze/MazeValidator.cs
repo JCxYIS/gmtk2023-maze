@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class MazeValidator
 {
-    public List<Vector2Int> Path { get; private set; }
+    public static List<Vector2Int> Path { get; private set; }
 
     public bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
     {
@@ -24,14 +24,14 @@ public class MazeValidator
         Vector2Int[] directVecArr = {new Vector2Int(0, 1), new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(1, 0)};
         Vector2Int[,] traceBackMap = new Vector2Int[rows, cols];
         int[,]  isVisited = new int[rows, cols];        // init to 0 by default
-        Stack<Vector2Int> stack = new Stack<Vector2Int>();
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
 
         // start dfs
-        stack.Push(currentPos);     
+        queue.Enqueue(currentPos);     
         isVisited[currentPos.x, currentPos.y] = 1;
 
-        while (stack.Count != 0) {
-            Vector2Int pos = stack.Pop();
+        while (queue.Count != 0) {
+            Vector2Int pos = queue.Dequeue();
 
             // found the destination
             if (pos == destPos) {
@@ -47,7 +47,7 @@ public class MazeValidator
                 if (!maze[pos.x, pos.y].HasFlag(state) && isVisited[newPos.x, newPos.y] == 0) {
                     isVisited[newPos.x, newPos.y] = 1;
                     traceBackMap[newPos.x, newPos.y] = pos;
-                    stack.Push(newPos);
+                    queue.Enqueue(newPos);
                 }
             }
         }
