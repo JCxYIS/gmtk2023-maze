@@ -11,7 +11,7 @@ public class Wall : MonoBehaviour
     public void Init(int i, int j, WallState state)
     {
         _state = state;
-        transform.localPosition = new Vector3(i, 0, j);
+        transform.localPosition = new Vector3(i, 0.5f, j);
 
         if (state.HasFlag(WallState.UP))
         {

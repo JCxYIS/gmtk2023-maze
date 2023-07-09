@@ -2,11 +2,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public static class MazeValidator
+public class MazeValidator
 {
-    public static bool ValidateMaze(WallState[,] maze)
+    public List<Vector2> Path { get; private set; }
+
+    public bool CalculatePath(WallState[,] maze)
     {
-        // TODO
-        return true;
+        // TODO route
+
+        // if(maze[0,1].HasFlag(WallState.UP))
+        // {
+        //     ...
+        // }
+
+        // result path
+        Path = new List<Vector2>(); // FIXME store result here
+        return false;
     }
 }

@@ -26,9 +26,12 @@ public class MazeController : MonoBehaviour
     private WallState[,] _maze;
     private Dictionary<(int, int, WallState), Wall> _walls = new Dictionary<(int, int, WallState), Wall>();
 
+    private MazeValidator _validator;
+
     public int Width => width;
     public int Height => height;
     public UnityAction OnMazeChanged;
+    public List<Vector2> Path => _validator.Path;
 
 
     #region monobehaviour
@@ -106,10 +109,19 @@ public class MazeController : MonoBehaviour
     {
         // perhaps add single flag check here? lazy lol
 
+        // check dest is reachable
+        MazeValidator tmp_validator = new MazeValidator();
+        _maze[i, j] |= state;
+        if(!tmp_validator.CalculatePath(_maze))
+        {
+            _maze[i, j] &= ~state;  // remove flag
+            throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");
+        }
+        _validator = tmp_validator;
+
         var wall = Instantiate(wallPrefab, transform).GetComponent<Wall>();
         wall.Init(i, j, state);
         _walls.Add((i, j, state), wall);
-        _maze[i, j] |= state;
         if(!doNotCallOnMazeChanged)
             OnMazeChanged?.Invoke();
         return wall;
