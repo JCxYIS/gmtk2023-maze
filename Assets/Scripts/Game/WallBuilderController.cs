@@ -65,7 +65,7 @@ public class WallBuilderController : MonoBehaviour
         if((cell & side) != 0) // has wall
         {
             Wall wall = _mazeController.GetWall(cellI, cellJ, side);
-            _cursor.transform.position = wall.transform.position;
+            _cursor.transform.position = wall.transform.position + Vector3.down * .5f;
             _cursor.eulerAngles = wall.transform.eulerAngles;
             _cursorRenderer.material.color = Color.red;
 

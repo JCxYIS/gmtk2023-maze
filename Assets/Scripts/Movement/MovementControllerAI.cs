@@ -12,6 +12,12 @@ public class MovementControllerAI : MonoBehaviour
     // NavMeshAgent _agent;
     Stack<Vector2Int> _plannedPath = new Stack<Vector2Int>();
 
+#if UNITY_EDITOR
+    [SerializeField] List<Vector2Int> _plannedpathPreview;
+#endif
+
+    Vector2Int lastPos;
+
     
     void Awake()
     {
@@ -32,7 +38,10 @@ public class MovementControllerAI : MonoBehaviour
 
             Vector2Int nextPos = _plannedPath.Pop();
             Vector3 nextPos3D = new Vector3(nextPos.x, 0, nextPos.y);
-            print($"Go to {nextPos} (real pos:{nextPos3D})");
+            // print($"Go to {nextPos} (real pos:{nextPos3D})");
+#if UNITY_EDITOR
+        _plannedpathPreview = new List<Vector2Int>(_plannedPath);
+#endif
             // _agent.SetDestination(nextPos3D);
             // move
             while(Vector3.Distance(transform.position, nextPos3D) >= 0.001f)
@@ -63,12 +72,12 @@ public class MovementControllerAI : MonoBehaviour
     {
         _plannedPath = new Stack<Vector2Int>(_mazeController.Path);
 
-        string s = "";
-        foreach(var p in _mazeController.Path)
-        {
-            s += "("+p.x+","+p.y+") \n";
-        }
-        print("Path: "+s);
+        // if(lastPos == _plannedPath.Peek())
+        // {
+        //     _plannedPath.Pop();
+        // }
+        StopAllCoroutines();
+        StartCoroutine(UpdateCoroutine());
     }
 
     // void RefreshTarget()

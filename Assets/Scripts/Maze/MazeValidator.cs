@@ -6,7 +6,7 @@ public class MazeValidator
 {
     public static List<Vector2Int> Path { get; private set; }
 
-    public bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
+    public static bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
     {
         // TODO route
 

@@ -29,12 +29,10 @@ public class MazeController : MonoBehaviour
     private WallState[,] _maze;
     private Dictionary<(int, int, WallState), Wall> _walls = new Dictionary<(int, int, WallState), Wall>();
 
-    private MazeValidator _validator;
-
     public int Width => width;
     public int Height => height;
     public UnityAction OnMazeChanged;
-    public List<Vector2Int> Path => _validator.Path;
+    public List<Vector2Int> Path => MazeValidator.Path;
 
 
     #region monobehaviour
@@ -88,8 +86,7 @@ public class MazeController : MonoBehaviour
         // startpos and endpos
         Instantiate(startPosPrefab, transform).position = new Vector3(0, 0, 0);
         Instantiate(destPosPrefab, transform).position = new Vector3(width-1, 0, height-1);
-        _validator = new MazeValidator();
-        _validator.CalculatePath(new Vector2Int(0, 0), new Vector2Int(width-1, height-1), _maze);
+        MazeValidator.CalculatePath(new Vector2Int(0, 0), new Vector2Int(width-1, height-1), _maze);
         OnMazeChanged?.Invoke();
     }
     #endregion
@@ -121,12 +118,11 @@ public class MazeController : MonoBehaviour
             Vector2Int playerCell = new Vector2Int(Mathf.RoundToInt(mazeSolverTransform.position.x), Mathf.RoundToInt(mazeSolverTransform.position.z));
             
             _maze[i, j] |= state;
-            if(!tmp_validator.CalculatePath(playerCell, new Vector2Int(width-1, height-1), _maze))
+            if(!MazeValidator.CalculatePath(playerCell, new Vector2Int(width-1, height-1), _maze))
             {
                 _maze[i, j] &= ~state;  // remove flag
                 throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");
             }
-            _validator = tmp_validator;
         }
 
         var wall = Instantiate(wallPrefab, transform).GetComponent<Wall>();
