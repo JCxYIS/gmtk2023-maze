@@ -26,6 +26,8 @@ public class MazeController : MonoBehaviour
     private WallState[,] _maze;
     private Dictionary<(int, int, WallState), Wall> _walls = new Dictionary<(int, int, WallState), Wall>();
 
+    public int Width => width;
+    public int Height => height;
     public UnityAction OnMazeChanged;
 
 
@@ -68,7 +70,7 @@ public class MazeController : MonoBehaviour
                     }
                 }
 
-                if (j == 0) // 最左邊才有 LEFT
+                if (j == 0) // 最下邊才有 DOWN
                 {
                     if (cell.HasFlag(WallState.DOWN))
                     {

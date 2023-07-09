@@ -39,7 +39,26 @@ public class WallBuilderController : MonoBehaviour
         Vector3 position = hit.point;        
         int cellI = Mathf.RoundToInt(position.x);
         int cellJ = Mathf.RoundToInt(position.z);
-        WallState side = FindSide(position);        
+        WallState side = FindSide(position);      // which side is nearest  
+
+        // if side is RIGHT or DOWN, check if i, j fits the criteria (最右邊才有 RIGHT、最下邊才有 DOWN)
+        if(side == WallState.RIGHT)
+        {
+            if(cellI != _mazeController.Width-1)
+            {
+                cellI += 1;
+                side = WallState.LEFT;
+            }
+        }
+        else if(side == WallState.DOWN)
+        {
+            if(cellJ != 0)
+            {
+                cellJ -= 1;
+                side = WallState.UP;
+            }
+        }
+
         var cell = _mazeController.GetCell(cellI, cellJ);
 
         // determine action for wall/no wall
