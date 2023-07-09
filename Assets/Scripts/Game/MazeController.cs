@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class MazeController : MonoBehaviour
 {
+    public static int Seed = 0;
+
     [SerializeField]
     [Range(5, 25)]
     private int width = 10;
@@ -33,7 +35,7 @@ public class MazeController : MonoBehaviour
     public int Height => height;
     public UnityAction OnMazeChanged;
     public List<Vector2Int> Path => MazeValidator.Path;
-
+    
 
     #region monobehaviour
     
@@ -44,9 +46,10 @@ public class MazeController : MonoBehaviour
     void Start()
     {
         // generate maze
-        int seed = Random.Range(int.MinValue, int.MaxValue);
-        print("Seed: "+seed);        
-        _maze = MazeGenerator.Generate(width, height, seed);
+        if(Seed == 0)
+            Seed = Random.Range(int.MinValue, int.MaxValue); // TODO
+        print("Seed: "+Seed);        
+        _maze = MazeGenerator.Generate(width, height, Seed);
 
         // render maze
         for (int i = 0; i < width; ++i)
@@ -121,6 +124,7 @@ public class MazeController : MonoBehaviour
             if(!MazeValidator.CalculatePath(playerCell, new Vector2Int(width-1, height-1), _maze))
             {
                 _maze[i, j] &= ~state;  // remove flag
+                FindObjectOfType<GameUI>().AddNotification("the maze should be solvable");
                 throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");
             }
         }

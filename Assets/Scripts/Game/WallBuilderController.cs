@@ -78,6 +78,7 @@ public class WallBuilderController : MonoBehaviour
                 // cd check
                 if(GameController.Instance.ConstructCd >= 0)
                 {
+                    FindObjectOfType<GameUI>().AddNotification($"wait for cooldown {GameController.Instance.ConstructCd.ToString("0.0")}");
                     return;
                 }                
                 print("Tear down wall "+cellI+", "+cellJ+"  "+side);
@@ -98,8 +99,9 @@ public class WallBuilderController : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 // cd check
-                if(GameController.Instance.ConstructCd >= 0 || GameController.Instance.Walls <= 0)
+                if(GameController.Instance.ConstructCd >= 0 /*|| GameController.Instance.Walls <= 0*/)
                 {
+                    FindObjectOfType<GameUI>().AddNotification($"wait for cooldown {GameController.Instance.ConstructCd.ToString("0.0")}");
                     return;
                 }
                 print("Build wall "+cellI+", "+cellJ+"  "+side);
