@@ -1,17 +1,16 @@
 # A-maZinG
+###### Submissions of GMTK Game Jam 2023 - Role Reversed
 
 ![](https://img.itch.zone/aW1nLzEyNzM2MDQ1LnBuZw==/315x250%23c/fTSpHN.png)
 
-A maze game, but intead of solving it, you BUILD it. 
+> A maze game, but intead of solving it, you BUILD it. 
 
 thy purpose is to slowing down the maze solver, and make it travel as many blocks as you can.
 thou can  summoned/unsummon a wall with 🐭, but thou still need to make the maze solvable in any time or orang will be ANGERY.
 
 
 ## How to operate
-
 - Left mouse click to build/destroy a wall
-
 - hold right mouse click to rotate the screen - thou cannot build a wall which will make the maze unsolvable
 
 
@@ -38,9 +37,13 @@ https://github.com/JCxYIS/gmtk2023-maze
 - [SpaceSkies Free](https://assetstore.unity.com/packages/2d/textures-materials/sky/spaceskies-free-80503) skybox
 - [FEEL](https://assetstore.unity.com/packages/tools/particles-effects/feel-183370) package & some art
 - [Pastel Chess Scene](https://skfb.ly/6TS6p) by Dsanchez13, table 3d models
+- [Chess Pieces](https://www.youtube.com/watch?v=mxqfSdp2Isc) as BGM
 - meme man
 - orang
 <!-- - [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents.git) for maze navigation -->
 
 
 # C00| 4nd 900d
+
+https://youtu.be/ySMjlL35unE?t=815
+> (go to 13:35)
