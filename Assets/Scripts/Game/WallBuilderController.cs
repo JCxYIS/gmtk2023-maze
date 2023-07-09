@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 public class WallBuilderController : MonoBehaviour
 {
-    Camera _cam;
 
     [SerializeField]
     Transform _cursor;
 
+    Camera _cam;
+    MazeController _mazeController;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -17,6 +18,7 @@ public class WallBuilderController : MonoBehaviour
     void Start()
     {
         _cam = Camera.main;
+        _mazeController = FindObjectOfType<MazeController>();
     }
 
     /// <summary>
@@ -24,63 +26,69 @@ public class WallBuilderController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        var ray = _cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100f))
+        if (!Physics.Raycast(ray, out hit, 100f))
         {
-            var position = hit.point;
-            // position.x = Mathf.Round(position.x);
-            // position.z = Mathf.Round(position.z);
-            // _cursor.transform.position = position;
-            SetCursorPos(position);
+            return;
         }
 
+        // find cell
+        Vector3 position = hit.point;        
+        int cellI = Mathf.RoundToInt(position.x);
+        int cellJ = Mathf.RoundToInt(position.z);
+        WallState side = FindSide(position);        
+        var cell = _mazeController.GetCell(cellI, cellJ);
 
-        if (Input.GetMouseButtonDown(0))
+        // determine action for wall/no wall
+        if((cell & side) != 0) // has wall
         {
-            // TODO
-            print("Click at "+_cursor.transform.position);
+            _cursor.transform.position = new Vector3(999,0,999);
+
+            // handle click
+            if (Input.GetMouseButtonDown(0))
+            {
+                print("Tear down wall "+cellI+", "+cellJ+"  "+side);
+                _mazeController.TearDownWall(cellI, cellJ, side);
+            }
         }
+        else // no wall
+        {
+            float offsetI = side == WallState.LEFT ? -.5f : (side == WallState.RIGHT ? .5f : 0);
+            float offsetJ = side == WallState.DOWN ? -.5f : (side == WallState.UP ? .5f : 0);
+            _cursor.transform.position = new Vector3(cellI+offsetI, 0, cellJ+offsetJ);
+            _cursor.eulerAngles = new Vector3(0, (side == WallState.UP || side == WallState.DOWN) ? 90 : 0, 0);
+
+            // handle click
+            if (Input.GetMouseButtonDown(0))
+            {
+                print("Build wall "+cellI+", "+cellJ+"  "+side);
+                _mazeController.BuildWall(cellI, cellJ, side);
+            }
+        }
+
+        
     }
 
-    void SetCursorPos(Vector3 pos)
+    WallState FindSide(Vector3 pos)
     {
         float x = pos.x;
-        float z = pos.z;
-        
+        float z = pos.z;        
         float disToLEFT = Mathf.Abs(x - Mathf.Round(x)+0.5f);
+        float disToUP = Mathf.Abs(z - Mathf.Round(z)-0.5f);
         float disToRIGHT = Mathf.Abs(x - Mathf.Round(x)-0.5f);
-        float disToUP = Mathf.Abs(z - Mathf.Round(z)+0.5f);
-        float disToDOWN = Mathf.Abs(z - Mathf.Round(z)-0.5f);
-
+        float disToDOWN = Mathf.Abs(z - Mathf.Round(z)+0.5f);
+        // find which side is nearest
         float min = Mathf.Min(disToLEFT, disToRIGHT, disToUP, disToDOWN);
-
         if (min == disToLEFT)
-        {
-            x = Mathf.Round(x)-0.5f;
-            z = Mathf.Round(z);
-            _cursor.eulerAngles = Vector3.zero;
-        }
+            return WallState.LEFT;
         else if (min == disToRIGHT)
-        {
-            x = Mathf.Round(x)+0.5f;
-            z = Mathf.Round(z);
-            _cursor.eulerAngles = Vector3.zero;
-        }
+            return WallState.RIGHT;        
         else if (min == disToUP)
-        {
-            x = Mathf.Round(x);
-            z = Mathf.Round(z)-0.5f;  
-            _cursor.eulerAngles = new Vector3(0, 90f, 0);
-        }
-        else if (min == disToDOWN)
-        {
-            x = Mathf.Round(x);
-            z = Mathf.Round(z)+0.5f;
-            _cursor.eulerAngles = new Vector3(0, 90f, 0);
-        }
-
-        _cursor.transform.position = new Vector3(x, pos.y, z);
-        // print($"{pos} => {_cursor.transform.position}");
+            return WallState.UP;
+        else
+            return WallState.DOWN;
     }
+
+    
 }

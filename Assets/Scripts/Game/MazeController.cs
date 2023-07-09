@@ -6,15 +6,12 @@ using System.Collections.Generic;
 public class MazeController : MonoBehaviour
 {
     [SerializeField]
-    [Range(1, 50)]
+    [Range(5, 25)]
     private int width = 10;
 
     [SerializeField]
-    [Range(1, 50)]
+    [Range(5, 25)]
     private int height = 10;
-
-    [SerializeField]
-    private float wallThickness = 1f;
 
 
     [SerializeField]
@@ -26,6 +23,7 @@ public class MazeController : MonoBehaviour
 
     
     private WallState[,] _maze;
+    private Dictionary<(int, int, WallState), Wall> _walls = new Dictionary<(int, int, WallState), Wall>();
 
 
     #region monobehaviour
@@ -36,8 +34,9 @@ public class MazeController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        // generate maze
         int seed = Random.Range(int.MinValue, int.MaxValue);
-        print("Seed: "+seed);
+        print("Seed: "+seed);        
         _maze = MazeGenerator.Generate(width, height, seed);
 
         // render maze
@@ -46,53 +45,38 @@ public class MazeController : MonoBehaviour
             for (int j = 0; j < height; ++j)
             {
                 var cell = _maze[i, j];
-                var position = new Vector3(-width/2+i, 0, -height/2+j);
+                var position = new Vector3(i, 0, j);
 
                 if (cell.HasFlag(WallState.UP))
                 {
-                    var topWall = Instantiate(wallPrefab, transform) as Transform;
-                    topWall.position = position + new Vector3(0, 0, 0.5f);
-                    topWall.localScale = new Vector3(wallThickness, topWall.localScale.y, topWall.localScale.z);
-                    topWall.eulerAngles = new Vector3(0, 90, 0);
-                    topWall.name = $"Wall ({i}. {j}) UP";
+                    BuildWall(i, j, WallState.UP);
                 }
 
                 if (cell.HasFlag(WallState.LEFT))
                 {
-                    var leftWall = Instantiate(wallPrefab, transform) as Transform;
-                    leftWall.position = position + new Vector3(-0.5f, 0, 0);
-                    leftWall.localScale = new Vector3(wallThickness, leftWall.localScale.y, leftWall.localScale.z);
-                    leftWall.name = $"Wall ({i}. {j}) LEFT";
+                    BuildWall(i, j, WallState.LEFT);
                 }
 
-                if (i == width - 1)
+                if (i == width - 1) // 最右邊才有 RIGHT
                 {
                     if (cell.HasFlag(WallState.RIGHT))
                     {
-                        var rightWall = Instantiate(wallPrefab, transform) as Transform;
-                        rightWall.position = position + new Vector3(0.5f, 0, 0);
-                        rightWall.localScale = new Vector3(wallThickness, rightWall.localScale.y, rightWall.localScale.z);
-                        rightWall.name = $"Wall ({i}. {j}) RIGHT";
+                        BuildWall(i, j, WallState.RIGHT);
                     }
                 }
 
-                if (j == 0)
+                if (j == 0) // 最左邊才有 LEFT
                 {
                     if (cell.HasFlag(WallState.DOWN))
                     {
-                        var bottomWall = Instantiate(wallPrefab, transform) as Transform;
-                        bottomWall.position = position + new Vector3(0, 0, -0.5f);
-                        bottomWall.localScale = new Vector3(wallThickness, bottomWall.localScale.y, bottomWall.localScale.z);
-                        bottomWall.eulerAngles = new Vector3(0, 90, 0);
-                        bottomWall.name = $"Wall ({i}. {j}) BOTTOM";
+                        BuildWall(i, j, WallState.DOWN);
                     }
                 }
             }
         }
         // startpos and endpos
-        Instantiate(startPosPrefab, transform).position = new Vector3(-width/2, 0, -height/2);
-        Instantiate(destPosPrefab, transform).position = new Vector3(width/2-1, 0, height/2-1);
-
+        Instantiate(startPosPrefab, transform).position = new Vector3(0, 0, -height);
+        Instantiate(destPosPrefab, transform).position = new Vector3(width-1, 0, height-1);
     }
     #endregion
 
@@ -100,9 +84,34 @@ public class MazeController : MonoBehaviour
     {
         if (i < 0 || i >= width || j < 0 || j >= height)
         {
-            throw new System.IndexOutOfRangeException();
+            return 0;
         }
 
         return _maze[i, j];
+    }
+
+
+    public Wall BuildWall(int i, int j, WallState state)
+    {
+        // perhaps add single flag check here? lazy lol
+
+        var wall = Instantiate(wallPrefab, transform).GetComponent<Wall>();
+        wall.Init(i, j, state);
+        _walls.Add((i, j, state), wall);
+        _maze[i, j] |= state;
+        return wall;
+    }
+
+    public void TearDownWall(int i, int j, WallState state)
+    {
+        // perhaps add single flag check here? lazy lol
+
+        var wall = _walls[(i, j, state)];
+        if(wall == null)
+            throw new System.Exception($"No wall at {i} {j} {state}");
+        
+        wall.MarkDestroyed();
+        _maze[i, j] &= ~state;  // remove flag
+        _walls.Remove((i,j,state));
     }
 }

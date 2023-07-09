@@ -13,14 +13,21 @@ public class MovementControllerAI : MonoBehaviour
     /// </summary>
     void Start()
     {
-        _agent = GetComponent<NavMeshAgent>();
-        InvokeRepeating("RefreshTarget", 1f, 1f);
-        
+        _agent = GetComponent<NavMeshAgent>();        
     }
 
     void RefreshTarget()
     {
-        var result = _agent.SetDestination(FindObjectOfType<DestBlock>().transform.position);
-        print(result);
+        // TODO change timing (not every 1s)
+        NavMeshPath navMeshPath = new NavMeshPath();
+        Vector3 dest = FindObjectOfType<DestBlock>().transform.position;
+        if (_agent.CalculatePath(dest, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
+        {
+            _agent.SetPath(navMeshPath);
+        }
+        else
+        {
+            Debug.Log("No possible path!");
+        }
     }
 }
