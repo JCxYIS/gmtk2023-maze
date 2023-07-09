@@ -14,7 +14,7 @@ public class GameUI : MonoBehaviour
     /// </summary>
     void Update()
     {
-        _scoreText.text = GameController.Instance.Score.ToString("0");
+        _scoreText.text = "Scor: "+ GameController.Instance.Score.ToString("0");
         _timeText.text = GameController.Instance.GameTime.ToString("0.0");
         _wallsText.text = GameController.Instance.Walls.ToString();
     }

@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
 
     bool _gameOvered = false;
+    public bool GameOvered => _gameOvered;
 
     float _score = 0;
     public float Score => _score;
@@ -19,6 +20,8 @@ public class GameController : MonoBehaviour
 
     int _walls = 0;
     public int Walls => _walls;
+    
+    public int TouchedBlocks = 0;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -39,11 +42,16 @@ public class GameController : MonoBehaviour
         }
 
         _time += Time.deltaTime;
-        _score += Time.deltaTime * 10f;
+        // _score += Time.deltaTime * 10f;
         _constructCd -= Time.deltaTime;
     }
 
     // ---
+
+    public void GameOver()
+    {
+        _gameOvered = true;
+    }
 
     public void SetConstructCd(float cd = 3f)
     {
@@ -53,5 +61,10 @@ public class GameController : MonoBehaviour
     public void AddWalls(int delta = 1)
     {
         _walls += delta;
+    }
+
+    public void AddScore(int delta = 1)
+    {
+        _score += delta;
     }
 }

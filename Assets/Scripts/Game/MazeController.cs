@@ -81,10 +81,10 @@ public class MazeController : MonoBehaviour
                         BuildWall(i, j, WallState.DOWN, false);
                     }
                 }
+                Instantiate(startPosPrefab, transform).position = new Vector3(i, 0, j);
             }
         }
         // startpos and endpos
-        Instantiate(startPosPrefab, transform).position = new Vector3(0, 0, 0);
         Instantiate(destPosPrefab, transform).position = new Vector3(width-1, 0, height-1);
         MazeValidator.CalculatePath(new Vector2Int(0, 0), new Vector2Int(width-1, height-1), _maze);
         OnMazeChanged?.Invoke();

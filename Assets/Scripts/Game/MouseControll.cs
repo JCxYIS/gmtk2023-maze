@@ -28,7 +28,6 @@ public class MouseControll : MonoBehaviour
     {
         if (Input.GetMouseButton(1))
         {
-            print("AAA");
             if (Input.GetAxis("Mouse X") > 0 || Input.GetAxis("Mouse X") < 0)
             {
                 _orbitalTransposer.m_Heading.m_Bias += Input.GetAxisRaw("Mouse X") * _moveSpeed;

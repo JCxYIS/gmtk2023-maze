@@ -10,6 +10,10 @@ public class DestBlock : MonoBehaviour
     /// <param name="other">The other Collider involved in this collision.</param>
     void OnTriggerEnter(Collider other)
     {
-        
+        if(other.CompareTag("Player"))
+        {
+            GameController.Instance.GameOver();
+            enabled = false;
+        }
     }
 }

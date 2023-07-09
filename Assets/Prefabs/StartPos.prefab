@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2550825292052357498}
   - component: {fileID: 2550825292052357499}
   - component: {fileID: 2550825292052357496}
+  - component: {fileID: 4850814014171885540}
   m_Layer: 0
   m_Name: StartPos
   m_TagString: Untagged
@@ -60,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 467db2a28dc1c6a45b450dc6d124de59, type: 2}
+  - {fileID: 2100000, guid: dbeb4095f462e904080a0fc4d90a4ad8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -95,3 +96,16 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4850814014171885540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2550825292052357494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb37d96d7d7b90a488dc6bc9bdd11ea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _steppedMaterial: {fileID: 2100000, guid: ba93664d337514a42b504f1785c7bd90, type: 2}
