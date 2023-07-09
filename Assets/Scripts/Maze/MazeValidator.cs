@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class MazeValidator
 {
-    public List<Vector2> Path { get; private set; }
+    public List<Vector2Int> Path { get; private set; }
 
-    public bool CalculatePath(WallState[,] maze)
+    public bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
     {
         // TODO route
 
@@ -16,7 +16,7 @@ public class MazeValidator
         // }
 
         // result path
-        Path = new List<Vector2>(); // FIXME store result here
+        Path = new List<Vector2Int>(); // FIXME store result here
         return false;
     }
 }

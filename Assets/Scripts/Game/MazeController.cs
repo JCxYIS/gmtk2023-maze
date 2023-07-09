@@ -31,7 +31,7 @@ public class MazeController : MonoBehaviour
     public int Width => width;
     public int Height => height;
     public UnityAction OnMazeChanged;
-    public List<Vector2> Path => _validator.Path;
+    public List<Vector2Int> Path => _validator.Path;
 
 
     #region monobehaviour
@@ -112,7 +112,7 @@ public class MazeController : MonoBehaviour
         // check dest is reachable
         MazeValidator tmp_validator = new MazeValidator();
         _maze[i, j] |= state;
-        if(!tmp_validator.CalculatePath(_maze))
+        if(!tmp_validator.CalculatePath(new Vector2Int(i, j), new Vector2Int(width-1, height-1), _maze))
         {
             _maze[i, j] &= ~state;  // remove flag
             throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");
