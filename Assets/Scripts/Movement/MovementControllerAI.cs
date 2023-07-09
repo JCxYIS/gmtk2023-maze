@@ -5,14 +5,41 @@ using UnityEngine.AI;
 
 public class MovementControllerAI : MonoBehaviour
 {
+    [SerializeField]
+    float _moveSpeed = 0.2f;
+
     MazeController _mazeController;
-    NavMeshAgent _agent;
+    // NavMeshAgent _agent;
+    Stack<Vector2Int> _plannedPath = new Stack<Vector2Int>();
 
     
     void Awake()
     {
-        _agent = GetComponent<NavMeshAgent>();
+        // _agent = GetComponent<NavMeshAgent>();
         _mazeController = FindObjectOfType<MazeController>();
+        StartCoroutine(UpdateCoroutine());
+    }
+
+    IEnumerator UpdateCoroutine()
+    {
+        while(true)
+        {
+            if(_plannedPath.Count == 0)
+            {
+                yield return null;
+                continue;
+            }
+
+            Vector2Int nextPos = _plannedPath.Pop();
+            Vector3 nextPos3D = new Vector3(nextPos.x, 0, nextPos.y);
+            // _agent.SetDestination(nextPos3D);
+            // move
+            while(Vector3.Distance(transform.position, nextPos3D) >= 0.01f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, nextPos3D, _moveSpeed * Time.deltaTime);
+                yield return null;
+            }
+        }
     }
 
     /// <summary>
@@ -32,17 +59,22 @@ public class MovementControllerAI : MonoBehaviour
     }
 
     void RefreshTarget()
-    {        
-        NavMeshPath navMeshPath = new NavMeshPath();
-        Vector3 dest = FindObjectOfType<DestBlock>().transform.position;
-        if (_agent.CalculatePath(dest, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
-        {
-            _agent.SetPath(navMeshPath);
-            print("Refreshed path!");
-        }
-        else
-        {
-            Debug.Log("No possible path!");
-        }
+    {
+        _plannedPath = new Stack<Vector2Int>(_mazeController.Path);
     }
+
+
+    // {        
+    //     NavMeshPath navMeshPath = new NavMeshPath();
+    //     Vector3 dest = FindObjectOfType<DestBlock>().transform.position;
+    //     if (_agent.CalculatePath(dest, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
+    //     {
+    //         _agent.SetPath(navMeshPath);
+    //         print("Refreshed path!");
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("No possible path!");
+    //     }
+    // }
 }

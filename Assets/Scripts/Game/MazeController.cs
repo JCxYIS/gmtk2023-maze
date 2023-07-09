@@ -57,19 +57,19 @@ public class MazeController : MonoBehaviour
 
                 if (cell.HasFlag(WallState.UP))
                 {
-                    BuildWall(i, j, WallState.UP, true);
+                    BuildWall(i, j, WallState.UP, false);
                 }
 
                 if (cell.HasFlag(WallState.LEFT))
                 {
-                    BuildWall(i, j, WallState.LEFT, true);
+                    BuildWall(i, j, WallState.LEFT, false);
                 }
 
                 if (i == width - 1) // 最右邊才有 RIGHT
                 {
                     if (cell.HasFlag(WallState.RIGHT))
                     {
-                        BuildWall(i, j, WallState.RIGHT, true);
+                        BuildWall(i, j, WallState.RIGHT, false);
                     }
                 }
 
@@ -77,7 +77,7 @@ public class MazeController : MonoBehaviour
                 {
                     if (cell.HasFlag(WallState.DOWN))
                     {
-                        BuildWall(i, j, WallState.DOWN, true);
+                        BuildWall(i, j, WallState.DOWN, false);
                     }
                 }
             }
@@ -85,6 +85,8 @@ public class MazeController : MonoBehaviour
         // startpos and endpos
         Instantiate(startPosPrefab, transform).position = new Vector3(0, 0, 0);
         Instantiate(destPosPrefab, transform).position = new Vector3(width-1, 0, height-1);
+        _validator = new MazeValidator();
+        _validator.CalculatePath(new Vector2Int(0, 0), new Vector2Int(width-1, height-1), _maze);
         OnMazeChanged?.Invoke();
     }
     #endregion
@@ -105,24 +107,27 @@ public class MazeController : MonoBehaviour
     }
 
 
-    public Wall BuildWall(int i, int j, WallState state, bool doNotCallOnMazeChanged = false)
+    public Wall BuildWall(int i, int j, WallState state, bool doValidate = true)
     {
         // perhaps add single flag check here? lazy lol
 
         // check dest is reachable
-        MazeValidator tmp_validator = new MazeValidator();
-        _maze[i, j] |= state;
-        if(!tmp_validator.CalculatePath(new Vector2Int(i, j), new Vector2Int(width-1, height-1), _maze))
+        if(doValidate)
         {
-            _maze[i, j] &= ~state;  // remove flag
-            throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");
+            MazeValidator tmp_validator = new MazeValidator();
+            _maze[i, j] |= state;
+            if(!tmp_validator.CalculatePath(new Vector2Int(i, j), new Vector2Int(width-1, height-1), _maze))
+            {
+                _maze[i, j] &= ~state;  // remove flag
+                throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");
+            }
+            _validator = tmp_validator;
         }
-        _validator = tmp_validator;
 
         var wall = Instantiate(wallPrefab, transform).GetComponent<Wall>();
         wall.Init(i, j, state);
         _walls.Add((i, j, state), wall);
-        if(!doNotCallOnMazeChanged)
+        if(doValidate)
             OnMazeChanged?.Invoke();
         return wall;
     }
