@@ -22,6 +22,9 @@ public class MazeController : MonoBehaviour
     [SerializeField]
     private Transform destPosPrefab = null;
 
+    [SerializeField]
+    private Transform mazeSolverTransform = null;
+
     
     private WallState[,] _maze;
     private Dictionary<(int, int, WallState), Wall> _walls = new Dictionary<(int, int, WallState), Wall>();
@@ -115,8 +118,10 @@ public class MazeController : MonoBehaviour
         if(doValidate)
         {
             MazeValidator tmp_validator = new MazeValidator();
+            Vector2Int playerCell = new Vector2Int(Mathf.RoundToInt(mazeSolverTransform.position.x), Mathf.RoundToInt(mazeSolverTransform.position.z));
+            
             _maze[i, j] |= state;
-            if(!tmp_validator.CalculatePath(new Vector2Int(i, j), new Vector2Int(width-1, height-1), _maze))
+            if(!tmp_validator.CalculatePath(playerCell, new Vector2Int(width-1, height-1), _maze))
             {
                 _maze[i, j] &= ~state;  // remove flag
                 throw new System.InvalidOperationException($"Dest will be unreachable if build wall at {i} {j} {state}");

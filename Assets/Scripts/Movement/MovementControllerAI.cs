@@ -32,9 +32,10 @@ public class MovementControllerAI : MonoBehaviour
 
             Vector2Int nextPos = _plannedPath.Pop();
             Vector3 nextPos3D = new Vector3(nextPos.x, 0, nextPos.y);
+            print($"Go to {nextPos} (real pos:{nextPos3D})");
             // _agent.SetDestination(nextPos3D);
             // move
-            while(Vector3.Distance(transform.position, nextPos3D) >= 0.01f)
+            while(Vector3.Distance(transform.position, nextPos3D) >= 0.001f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, nextPos3D, _moveSpeed * Time.deltaTime);
                 yield return null;
@@ -61,9 +62,16 @@ public class MovementControllerAI : MonoBehaviour
     void RefreshTarget()
     {
         _plannedPath = new Stack<Vector2Int>(_mazeController.Path);
+
+        string s = "";
+        foreach(var p in _mazeController.Path)
+        {
+            s += "("+p.x+","+p.y+") \n";
+        }
+        print("Path: "+s);
     }
 
-
+    // void RefreshTarget()
     // {        
     //     NavMeshPath navMeshPath = new NavMeshPath();
     //     Vector3 dest = FindObjectOfType<DestBlock>().transform.position;
