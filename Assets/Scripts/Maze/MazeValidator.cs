@@ -16,6 +16,7 @@ public class MazeValidator
     /// <returns>ture if path is found. other wise, return false</returns>
     public static bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
     {
+        Debug.Log($"Calc: current: {currentPos}, dest: {destPos}");
         // ------------------------------
         // BFS
         // ------------------------------
@@ -50,7 +51,7 @@ public class MazeValidator
             Vector2Int newPos;
 
             // check up
-            if (!maze[pos.x, pos.y].HasFlag(WallStat.UP)) {
+            if (!maze[pos.x, pos.y].HasFlag(WallState.UP)) {
                 newPos = pos + new Vector2Int(0, 1);
                 int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
@@ -61,7 +62,7 @@ public class MazeValidator
             }
 
             // check down
-            if (!maze[pos.x, pos.y].HasFlag(WallStat.LEFT)) {
+            if (!maze[pos.x, pos.y].HasFlag(WallState.LEFT)) {
                 newPos = pos + new Vector2Int(-1, 0);
                 int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
@@ -75,7 +76,7 @@ public class MazeValidator
             //* Due to same ... reason, the down case and right case need some sepcial condition
             // check DOWN
                 //* down condition: check if down block has upper wall
-            if (!maze[pos.x, pos.y - 1].HasFlag(WallStat.UP)) {
+            if (pos.y > 0 && !maze[pos.x, pos.y - 1].HasFlag(WallState.UP)) {
                 newPos = pos + new Vector2Int(0, -1);
                 int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
@@ -87,7 +88,7 @@ public class MazeValidator
 
             // check RIGHT
                 //* right condition: check if right block has left wall
-            if (!maze[pos.x +1, pos.y].HasFlag(WallStat.LEFT)) {
+            if (pos.x < maze.GetLength(0)-1 && !maze[pos.x +1, pos.y].HasFlag(WallState.LEFT)) {
                 newPos = pos + new Vector2Int(1, 0);
                 int targetSteps = steps[newPos.x, newPos.y];
                 if (newSteps < targetSteps || targetSteps == -1) {
@@ -97,6 +98,17 @@ public class MazeValidator
                 }
             }
         }
+
+        // string s = "";
+        // for(int i = maze.GetLength(0)-1; i >=0; i--)
+        // {
+        //     for(int j = 0; j < maze.GetLength(0); j++)
+        //     {
+        //         s+= $"{steps[j,i]:00;-0} ";
+        //     }
+        //     s+= "\n";
+        // }
+        // Debug.Log(s);
 
         // path not found
         if (steps[destPos.x, destPos.y] == -1) {

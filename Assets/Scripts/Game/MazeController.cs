@@ -143,6 +143,8 @@ public class MazeController : MonoBehaviour
         
         wall.MarkDestroyed();
         _maze[i, j] &= ~state;  // remove flag
+        Vector2Int playerCell = new Vector2Int(Mathf.RoundToInt(mazeSolverTransform.position.x), Mathf.RoundToInt(mazeSolverTransform.position.z));
+        MazeValidator.CalculatePath(playerCell, new Vector2Int(width-1, height-1), _maze);
         OnMazeChanged?.Invoke();
         _walls.Remove((i,j,state));
     }
