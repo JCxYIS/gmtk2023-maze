@@ -8,9 +8,12 @@ public class WallBuilderController : MonoBehaviour
     [SerializeField]
     Transform _cursor;
 
+    float cd = 0;
+
     Camera _cam;
     MazeController _mazeController;
     MeshRenderer _cursorRenderer;
+
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -72,8 +75,15 @@ public class WallBuilderController : MonoBehaviour
             // handle click
             if (Input.GetMouseButtonDown(0))
             {
+                // cd check
+                if(GameController.Instance.ConstructCd >= 0)
+                {
+                    return;
+                }                
                 print("Tear down wall "+cellI+", "+cellJ+"  "+side);
                 _mazeController.TearDownWall(cellI, cellJ, side);
+                GameController.Instance.SetConstructCd();
+                GameController.Instance.AddWalls(1);
             }
         }
         else // no wall
@@ -87,8 +97,15 @@ public class WallBuilderController : MonoBehaviour
             // handle click
             if (Input.GetMouseButtonDown(0))
             {
+                // cd check
+                if(GameController.Instance.ConstructCd >= 0 || GameController.Instance.Walls <= 0)
+                {
+                    return;
+                }
                 print("Build wall "+cellI+", "+cellJ+"  "+side);
                 _mazeController.BuildWall(cellI, cellJ, side);
+                GameController.Instance.SetConstructCd();
+                GameController.Instance.AddWalls(-1);
             }
         }
 

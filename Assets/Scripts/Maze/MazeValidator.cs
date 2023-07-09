@@ -16,7 +16,8 @@ public class MazeValidator
     /// <returns>ture if path is found. other wise, return false</returns>
     public static bool CalculatePath(Vector2Int currentPos, Vector2Int destPos, WallState[,] maze)
     {
-        Debug.Log($"Calc: current: {currentPos}, dest: {destPos}");
+        // Debug.Log($"Calc: current: {currentPos}, dest: {destPos}");
+
         // ------------------------------
         // BFS
         // ------------------------------
@@ -116,7 +117,7 @@ public class MazeValidator
         }
 
         // traceback the path
-        Path = new List<Vector2Int>(); // FIXME store result here
+        Path = new List<Vector2Int>(); 
         Vector2Int backPos = destPos;
 
         while (backPos != currentPos) {

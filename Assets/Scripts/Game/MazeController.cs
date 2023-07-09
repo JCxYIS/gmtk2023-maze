@@ -129,13 +129,16 @@ public class MazeController : MonoBehaviour
         wall.Init(i, j, state);
         _walls.Add((i, j, state), wall);
         if(doValidate)
+        {
+            wall.MarkConstruct();
             OnMazeChanged?.Invoke();
+        }
         return wall;
     }
 
     public void TearDownWall(int i, int j, WallState state)
     {
-        // perhaps add single flag check here? lazy lol
+        // perhaps add single flag check here? lazy lol        
 
         var wall = _walls[(i, j, state)];
         if(wall == null)
