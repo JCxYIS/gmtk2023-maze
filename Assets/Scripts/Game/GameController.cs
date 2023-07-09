@@ -53,7 +53,7 @@ public class GameController : MonoBehaviour
         _gameOvered = true;
     }
 
-    public void SetConstructCd(float cd = 3f)
+    public void SetConstructCd(float cd = 2.5f)
     {
         _constructCd = cd;
     }

@@ -36,4 +36,9 @@ public class GameOverUI : MonoBehaviour
     {
         SceneManager.LoadScene("Menu");
     }
+
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene("Game");
+    }
 }
