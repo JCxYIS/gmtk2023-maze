@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class MazeController : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class MazeController : MonoBehaviour
     
     private WallState[,] _maze;
     private Dictionary<(int, int, WallState), Wall> _walls = new Dictionary<(int, int, WallState), Wall>();
+
+    public UnityAction OnMazeChanged;
 
 
     #region monobehaviour
@@ -49,19 +52,19 @@ public class MazeController : MonoBehaviour
 
                 if (cell.HasFlag(WallState.UP))
                 {
-                    BuildWall(i, j, WallState.UP);
+                    BuildWall(i, j, WallState.UP, true);
                 }
 
                 if (cell.HasFlag(WallState.LEFT))
                 {
-                    BuildWall(i, j, WallState.LEFT);
+                    BuildWall(i, j, WallState.LEFT, true);
                 }
 
                 if (i == width - 1) // 最右邊才有 RIGHT
                 {
                     if (cell.HasFlag(WallState.RIGHT))
                     {
-                        BuildWall(i, j, WallState.RIGHT);
+                        BuildWall(i, j, WallState.RIGHT, true);
                     }
                 }
 
@@ -69,14 +72,15 @@ public class MazeController : MonoBehaviour
                 {
                     if (cell.HasFlag(WallState.DOWN))
                     {
-                        BuildWall(i, j, WallState.DOWN);
+                        BuildWall(i, j, WallState.DOWN, true);
                     }
                 }
             }
         }
         // startpos and endpos
-        Instantiate(startPosPrefab, transform).position = new Vector3(0, 0, -height);
+        Instantiate(startPosPrefab, transform).position = new Vector3(0, 0, 0);
         Instantiate(destPosPrefab, transform).position = new Vector3(width-1, 0, height-1);
+        OnMazeChanged?.Invoke();
     }
     #endregion
 
@@ -90,8 +94,13 @@ public class MazeController : MonoBehaviour
         return _maze[i, j];
     }
 
+    public Wall GetWall(int i, int j, WallState state)
+    {
+        return _walls[(i, j, state)];
+    }
 
-    public Wall BuildWall(int i, int j, WallState state)
+
+    public Wall BuildWall(int i, int j, WallState state, bool doNotCallOnMazeChanged = false)
     {
         // perhaps add single flag check here? lazy lol
 
@@ -99,6 +108,8 @@ public class MazeController : MonoBehaviour
         wall.Init(i, j, state);
         _walls.Add((i, j, state), wall);
         _maze[i, j] |= state;
+        if(!doNotCallOnMazeChanged)
+            OnMazeChanged?.Invoke();
         return wall;
     }
 
@@ -112,6 +123,7 @@ public class MazeController : MonoBehaviour
         
         wall.MarkDestroyed();
         _maze[i, j] &= ~state;  // remove flag
+        OnMazeChanged?.Invoke();
         _walls.Remove((i,j,state));
     }
 }

@@ -10,6 +10,7 @@ public class WallBuilderController : MonoBehaviour
 
     Camera _cam;
     MazeController _mazeController;
+    MeshRenderer _cursorRenderer;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -19,6 +20,7 @@ public class WallBuilderController : MonoBehaviour
     {
         _cam = Camera.main;
         _mazeController = FindObjectOfType<MazeController>();
+        _cursorRenderer = _cursor.GetComponent<MeshRenderer>();
     }
 
     /// <summary>
@@ -43,7 +45,10 @@ public class WallBuilderController : MonoBehaviour
         // determine action for wall/no wall
         if((cell & side) != 0) // has wall
         {
-            _cursor.transform.position = new Vector3(999,0,999);
+            Wall wall = _mazeController.GetWall(cellI, cellJ, side);
+            _cursor.transform.position = wall.transform.position;
+            _cursor.eulerAngles = wall.transform.eulerAngles;
+            _cursorRenderer.material.color = Color.red;
 
             // handle click
             if (Input.GetMouseButtonDown(0))
@@ -58,6 +63,7 @@ public class WallBuilderController : MonoBehaviour
             float offsetJ = side == WallState.DOWN ? -.5f : (side == WallState.UP ? .5f : 0);
             _cursor.transform.position = new Vector3(cellI+offsetI, 0, cellJ+offsetJ);
             _cursor.eulerAngles = new Vector3(0, (side == WallState.UP || side == WallState.DOWN) ? 90 : 0, 0);
+             _cursorRenderer.material.color = Color.green;
 
             // handle click
             if (Input.GetMouseButtonDown(0))

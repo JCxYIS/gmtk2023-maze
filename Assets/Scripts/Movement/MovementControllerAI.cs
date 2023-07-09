@@ -5,25 +5,40 @@ using UnityEngine.AI;
 
 public class MovementControllerAI : MonoBehaviour
 {
+    MazeController _mazeController;
     NavMeshAgent _agent;
 
-    /// <summary>
-    /// Start is called on the frame when a script is enabled just before
-    /// any of the Update methods is called the first time.
-    /// </summary>
-    void Start()
+    
+    void Awake()
     {
-        _agent = GetComponent<NavMeshAgent>();        
+        _agent = GetComponent<NavMeshAgent>();
+        _mazeController = FindObjectOfType<MazeController>();
+    }
+
+    /// <summary>
+    /// This function is called when the object becomes enabled and active.
+    /// </summary>
+    void OnEnable()
+    {
+        _mazeController.OnMazeChanged += RefreshTarget;
+    }
+
+    /// <summary>
+    /// This function is called when the behaviour becomes disabled or inactive.
+    /// </summary>
+    void OnDisable()
+    {
+        _mazeController.OnMazeChanged -= RefreshTarget;
     }
 
     void RefreshTarget()
-    {
-        // TODO change timing (not every 1s)
+    {        
         NavMeshPath navMeshPath = new NavMeshPath();
         Vector3 dest = FindObjectOfType<DestBlock>().transform.position;
         if (_agent.CalculatePath(dest, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
         {
             _agent.SetPath(navMeshPath);
+            print("Refreshed path!");
         }
         else
         {
