@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 
 public class GameUI : MonoBehaviour
 {
@@ -10,8 +11,19 @@ public class GameUI : MonoBehaviour
     [SerializeField] Text _wallsText;
 
     [SerializeField] Text _notificationText;
+    [SerializeField] MMF_Player _notifFeedback;
 
     List<(float, string)> _notifications = new List<(float, string)>();
+
+
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    void Start()
+    {
+        _notifFeedback.Initialization();
+    }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
@@ -39,5 +51,6 @@ public class GameUI : MonoBehaviour
     public void AddNotification(string notif)
     {
         _notifications.Add((Time.time, notif));
+        _notifFeedback.PlayFeedbacks();
     }
 }
